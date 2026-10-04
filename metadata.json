@@ -1,0 +1,6 @@
+{
+  "name": "FluentPDF Studio",
+  "description": "Cross-platform and Windows-optimized PDF editor with font-matching text replacement, digital signatures, and drag-and-drop annotations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

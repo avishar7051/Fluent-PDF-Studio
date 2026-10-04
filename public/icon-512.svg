@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+    <linearGradient id="fold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="100%" stop-color="#93c5fd" />
+    </linearGradient>
+  </defs>
+  <!-- Background Rounded Shield / Tile -->
+  <rect width="512" height="512" rx="112" fill="#0f172a" />
+  
+  <!-- PDF Sheet Shape -->
+  <path d="M128 80 H320 L400 160 V432 C400 440.8 392.8 448 384 448 H128 C119.2 448 112 440.8 112 432 V96 C112 87.2 119.2 80 128 80 Z" fill="url(#grad)" />
+  
+  <!-- Top-Right Fold -->
+  <path d="M320 80 V144 C320 152.8 327.2 160 336 160 H400 Z" fill="url(#fold)" opacity="0.9" />
+  
+  <!-- Stylized Pen / Signature Quill / Edit Line -->
+  <path d="M160 220 H280 M160 270 H352 M160 320 H250" stroke="#ffffff" stroke-width="16" stroke-linecap="round" opacity="0.4" />
+  
+  <!-- Digital Signature Stroke / Nib -->
+  <g transform="translate(180, 290)">
+    <path d="M 0,60 Q 40,-20 80,40 T 160,20 Q 200,60 220,10" fill="none" stroke="#38bdf8" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+    <circle cx="220" cy="10" r="10" fill="#38bdf8" />
+    <circle cx="0" cy="60" r="8" fill="#38bdf8" />
+  </g>
+</svg>
