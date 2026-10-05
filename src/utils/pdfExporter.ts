@@ -110,15 +110,30 @@ export async function exportModifiedPdf(
           const font = await getPdfLibFont(pdfDoc, anno.fontSettings);
           const fontSize = anno.fontSettings?.size || 12;
           const textCol = parseColorToPdfRgb(anno.fontSettings?.color || '#0f172a');
+          const lines = text.split('\n');
+          const lineGapMultiplier = anno.fontSettings?.lineHeight ?? 1.25;
+          const lineHeight = fontSize * lineGapMultiplier;
 
-          // Align baseline nicely inside the box
-          page.drawText(text, {
-            x: pdfX,
-            y: pdfY + Math.max(2, (pdfH - fontSize) / 2),
-            size: fontSize,
-            font,
-            color: rgb(textCol.r, textCol.g, textCol.b),
-          });
+          if (lines.length === 1) {
+            // Align baseline nicely inside the box
+            page.drawText(text, {
+              x: pdfX + 2,
+              y: pdfY + Math.max(2, (pdfH - fontSize) / 2),
+              size: fontSize,
+              font,
+              color: rgb(textCol.r, textCol.g, textCol.b),
+            });
+          } else {
+            lines.forEach((line, lineIdx) => {
+              page.drawText(line, {
+                x: pdfX + 2,
+                y: pdfY + pdfH - (lineIdx + 1) * lineHeight + Math.max(0, (lineHeight - fontSize) * 0.35),
+                size: fontSize,
+                font,
+                color: rgb(textCol.r, textCol.g, textCol.b),
+              });
+            });
+          }
         }
       } else if (anno.type === 'text-box') {
         const text = anno.content || '';
@@ -138,13 +153,14 @@ export async function exportModifiedPdf(
             });
           }
 
-          // Support multi-line text
+          // Support multi-line text with customizable line gap
           const lines = text.split('\n');
-          const lineHeight = fontSize * (anno.fontSettings?.lineHeight || 1.3);
+          const lineGapMultiplier = anno.fontSettings?.lineHeight ?? 1.25;
+          const lineHeight = fontSize * lineGapMultiplier;
           lines.forEach((line, lineIdx) => {
             page.drawText(line, {
               x: pdfX + 4,
-              y: pdfY + pdfH - (lineIdx + 1) * lineHeight,
+              y: pdfY + pdfH - (lineIdx + 1) * lineHeight + Math.max(0, (lineHeight - fontSize) * 0.35),
               size: fontSize,
               font,
               color: rgb(textCol.r, textCol.g, textCol.b),

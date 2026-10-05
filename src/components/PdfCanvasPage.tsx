@@ -601,7 +601,8 @@ export const PdfCanvasPage: React.FC<PdfCanvasPageProps> = ({
                         color: anno.fontSettings?.color || '#0f172a',
                         textAlign: anno.fontSettings?.align || 'left',
                         letterSpacing: `${anno.fontSettings?.letterSpacing || 0}px`,
-                        lineHeight: 1.2,
+                        lineHeight: anno.fontSettings?.lineHeight ?? 1.25,
+                        whiteSpace: 'pre-wrap',
                         width: '100%',
                       }}
                     >
@@ -628,13 +629,104 @@ export const PdfCanvasPage: React.FC<PdfCanvasPageProps> = ({
                         textAlign: anno.fontSettings?.align || 'left',
                         whiteSpace: 'pre-wrap',
                         width: '100%',
-                        lineHeight: anno.fontSettings?.lineHeight || 1.25,
+                        lineHeight: anno.fontSettings?.lineHeight ?? 1.25,
                       }}
                     >
                       {anno.content}
                     </span>
                   </div>
                 )}
+
+                {/* FLOATING ACTION TOOLBAR FOR SELECTED TEXT: LINE GAP & SPACING */}
+                {isSelected && (anno.type === 'text-replace' || anno.type === 'text-box') && (() => {
+                  const baseFont: FontStyleInfo = anno.fontSettings || defaultFont || {
+                    family: '"Plus Jakarta Sans", sans-serif',
+                    size: 12,
+                    weight: '400',
+                    style: 'normal',
+                    color: '#0f172a',
+                  };
+
+                  const curLh = baseFont.lineHeight ?? 1.25;
+
+                  const updateLineHeight = (newLh: number) => {
+                    onUpdateAnnotation({
+                      ...anno,
+                      fontSettings: {
+                        ...baseFont,
+                        lineHeight: newLh,
+                      },
+                    });
+                  };
+
+                  return (
+                    <div
+                      className="absolute -top-9 left-0 bg-slate-950/95 text-white border border-slate-700/80 rounded-xl px-2 py-0.5 shadow-2xl z-50 flex items-center gap-1 backdrop-blur-md whitespace-nowrap pointer-events-auto text-[11px]"
+                      onClick={(e) => e.stopPropagation()}
+                      onPointerDown={(e) => e.stopPropagation()}
+                    >
+                      <span className="text-[10px] text-slate-400 font-medium">Line Gap:</span>
+                      <button
+                        type="button"
+                        onClick={() => updateLineHeight(Math.max(0.75, Math.round((curLh - 0.1) * 100) / 100))}
+                        className="px-1.5 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-rose-400 hover:text-white border border-slate-700 font-bold transition-colors cursor-pointer"
+                        title="Remove gap between lines (make tighter)"
+                      >
+                        -
+                      </button>
+                      <span className="font-mono text-[10px] font-bold text-orange-400 bg-orange-950/60 px-1.5 py-0.5 rounded border border-orange-800/60">
+                        {curLh.toFixed(2)}x
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => updateLineHeight(Math.min(2.8, Math.round((curLh + 0.1) * 100) / 100))}
+                        className="px-1.5 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-emerald-400 hover:text-white border border-slate-700 font-bold transition-colors cursor-pointer"
+                        title="Add gap between lines (spread lines apart)"
+                      >
+                        +
+                      </button>
+
+                      <div className="w-px h-3 bg-slate-800 mx-0.5" />
+
+                      <button
+                        type="button"
+                        onClick={() => updateLineHeight(0.9)}
+                        className={`px-1.5 py-0.5 rounded text-[10px] transition-colors ${
+                          Math.abs(curLh - 0.9) < 0.05
+                            ? 'bg-orange-500 text-white font-bold'
+                            : 'bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80'
+                        }`}
+                        title="Set tight lines (0.9x - No Gap)"
+                      >
+                        Tight
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updateLineHeight(1.5)}
+                        className={`px-1.5 py-0.5 rounded text-[10px] transition-colors ${
+                          Math.abs(curLh - 1.5) < 0.05
+                            ? 'bg-orange-500 text-white font-bold'
+                            : 'bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80'
+                        }`}
+                        title="Set comfortable spacing (1.5x)"
+                      >
+                        1.5x
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updateLineHeight(2.0)}
+                        className={`px-1.5 py-0.5 rounded text-[10px] transition-colors ${
+                          Math.abs(curLh - 2.0) < 0.05
+                            ? 'bg-orange-500 text-white font-bold'
+                            : 'bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80'
+                        }`}
+                        title="Set double spacing (2.0x - Wide Gap)"
+                      >
+                        2.0x
+                      </button>
+                    </div>
+                  );
+                })()}
 
                 {/* 3. DIGITAL SIGNATURE */}
                 {(anno.type === 'signature' || anno.type === 'image') && anno.signatureDataUrl && (

@@ -13,6 +13,10 @@ import {
   Eraser,
   Palette,
   Eye,
+  FoldVertical,
+  UnfoldVertical,
+  Minus,
+  Plus,
 } from 'lucide-react';
 import { FontStyleInfo, PdfTextItem } from '../types/pdf';
 import { AVAILABLE_FONTS } from '../utils/fontMatcher';
@@ -51,6 +55,7 @@ export const TextEditModal: React.FC<TextEditModalProps> = ({
   const [bgColor, setBgColor] = useState<string>('#ffffff');
   const [alignment, setAlignment] = useState<'left' | 'center' | 'right'>('left');
   const [letterSpacing, setLetterSpacing] = useState<number>(0);
+  const [lineHeight, setLineHeight] = useState<number>(1.25);
   const [horizontalPadding, setHorizontalPadding] = useState<number>(4);
   const [verticalPadding, setVerticalPadding] = useState<number>(3);
   const [eraseOriginal, setEraseOriginal] = useState<boolean>(true);
@@ -68,6 +73,7 @@ export const TextEditModal: React.FC<TextEditModalProps> = ({
       setTextColor(initialFont?.color || targetItem.detectedColor || '#0f172a');
       setBgColor(initialFont?.bgColor || '#ffffff');
       setAlignment(initialFont?.align || 'left');
+      setLineHeight(initialFont?.lineHeight ?? 1.25);
     }
   }, [targetItem, initialText, initialFont, isOpen]);
 
@@ -85,7 +91,7 @@ export const TextEditModal: React.FC<TextEditModalProps> = ({
         bgColor: eraseOriginal ? bgColor || '#ffffff' : 'transparent',
         letterSpacing,
         align: alignment,
-        lineHeight: 1.25,
+        lineHeight: parseFloat(lineHeight.toFixed(2)),
       },
       originalText,
       { horizontal: horizontalPadding, vertical: verticalPadding }
@@ -100,6 +106,13 @@ export const TextEditModal: React.FC<TextEditModalProps> = ({
     { label: 'Warm Light', value: '#fefce8' },
     { label: 'Dark Navy', value: '#0f172a' },
     { label: 'Pure Black', value: '#000000' },
+  ];
+
+  const lineGapPresets = [
+    { label: 'Remove Gap (0.9x)', value: 0.9, desc: 'Tight lines' },
+    { label: 'Standard (1.15x)', value: 1.15, desc: 'Normal' },
+    { label: 'Add Gap (1.5x)', value: 1.5, desc: 'Comfortable' },
+    { label: 'Double (2.0x)', value: 2.0, desc: 'Wide spacing' },
   ];
 
   return (
@@ -182,25 +195,104 @@ export const TextEditModal: React.FC<TextEditModalProps> = ({
               <span className="text-[11px] text-emerald-400 font-medium">Replaces previous text completely</span>
             </div>
             <textarea
-              rows={2}
+              rows={3}
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Type replacement text (e.g. Choose format, Select Type, New Title)..."
+              placeholder="Type replacement text (multiple lines supported)..."
               className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:border-orange-500 transition-colors shadow-inner"
             />
           </div>
 
+          {/* NEW FEATURE: Gap Between Lines (Line Spacing) */}
+          <div className="p-4 bg-slate-950/70 rounded-xl border border-slate-800 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <UnfoldVertical className="w-4 h-4 text-orange-400" />
+                <span className="text-xs font-semibold text-white">Gap Between Lines (Line Spacing)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-slate-400">Current Spacing:</span>
+                <span className="font-mono text-xs font-bold text-orange-400 bg-orange-950/60 px-2 py-0.5 rounded border border-orange-800/60">
+                  {lineHeight.toFixed(2)}x
+                </span>
+              </div>
+            </div>
+
+            {/* Quick Action Gap Presets */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {lineGapPresets.map((preset) => {
+                const isActive = Math.abs(lineHeight - preset.value) < 0.04;
+                return (
+                  <button
+                    key={preset.value}
+                    type="button"
+                    onClick={() => setLineHeight(preset.value)}
+                    className={`px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all text-left flex flex-col cursor-pointer ${
+                      isActive
+                        ? 'border-orange-500 bg-gradient-to-r from-orange-500/20 to-rose-500/20 text-white shadow-xs'
+                        : 'border-slate-800 bg-slate-900 text-slate-300 hover:border-slate-700 hover:text-white'
+                    }`}
+                  >
+                    <span className="font-semibold text-[11px]">{preset.label}</span>
+                    <span className="text-[10px] text-slate-400">{preset.desc}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Fine Tuning: Steppers and Range Slider */}
+            <div className="space-y-2 pt-2 border-t border-slate-800/80">
+              <div className="flex items-center justify-between text-xs text-slate-400">
+                <span>Fine-tune line gap:</span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setLineHeight((prev) => Math.max(0.75, Math.round((prev - 0.05) * 100) / 100))}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer text-xs"
+                    title="Remove gap between lines"
+                  >
+                    <Minus className="w-3 h-3 text-rose-400" />
+                    <span>Remove Gap</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLineHeight((prev) => Math.min(2.8, Math.round((prev + 0.05) * 100) / 100))}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer text-xs"
+                    title="Add gap between lines"
+                  >
+                    <Plus className="w-3 h-3 text-emerald-400" />
+                    <span>Add Gap</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] text-slate-500 font-medium">Tight (No Gap)</span>
+                <input
+                  type="range"
+                  min="0.75"
+                  max="2.8"
+                  step="0.05"
+                  value={lineHeight}
+                  onChange={(e) => setLineHeight(parseFloat(e.target.value))}
+                  className="flex-1 accent-orange-500 cursor-pointer"
+                />
+                <span className="text-[10px] text-slate-500 font-medium">Spacious (Wide Gap)</span>
+              </div>
+            </div>
+          </div>
+
           {/* Live Result Preview */}
-          <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1.5">
+          <div className="p-3.5 bg-slate-950/80 rounded-xl border border-slate-800 space-y-1.5">
             <div className="flex items-center justify-between text-xs text-slate-400">
               <span className="flex items-center gap-1.5 font-medium text-slate-300">
                 <Eye className="w-3.5 h-3.5 text-blue-400" />
-                Live Preview on Document:
+                Live Document Preview (Real-time Line Spacing):
               </span>
-              <span className="text-[10px] text-slate-400">Background patch completely hides previous text</span>
+              <span className="text-[10px] text-slate-400">Shows exact line gap on page</span>
             </div>
             <div
-              className="p-3 rounded-lg border border-slate-700 flex items-center overflow-hidden transition-all shadow-inner"
+              className="p-3.5 rounded-lg border border-slate-700 flex items-center overflow-hidden transition-all shadow-inner"
               style={{
                 backgroundColor: eraseOriginal ? bgColor : 'transparent',
               }}
@@ -214,8 +306,10 @@ export const TextEditModal: React.FC<TextEditModalProps> = ({
                   color: textColor,
                   textAlign: alignment,
                   letterSpacing: `${letterSpacing}px`,
-                  lineHeight: 1.25,
+                  lineHeight: `${lineHeight}`,
+                  whiteSpace: 'pre-wrap',
                   width: '100%',
+                  display: 'block',
                 }}
               >
                 {text || <span className="opacity-40 italic">Type replacement text above...</span>}

@@ -203,6 +203,49 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
                   />
                 </div>
               </div>
+
+              {/* Line Gap / Line Spacing */}
+              <div className="space-y-1.5 pt-2 border-t border-slate-800">
+                <div className="flex items-center justify-between text-[11px] text-slate-400">
+                  <span className="font-semibold text-slate-300">Line Gap (Spacing):</span>
+                  <span className="font-mono text-orange-400 font-bold">
+                    {(font.lineHeight ?? 1.25).toFixed(2)}x
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const cur = font.lineHeight ?? 1.25;
+                      handleFontChange({ lineHeight: Math.max(0.75, Math.round((cur - 0.1) * 100) / 100) });
+                    }}
+                    className="flex-1 py-1 px-2 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-rose-300 hover:text-white transition-colors text-xs font-semibold"
+                    title="Remove gap between lines"
+                  >
+                    - Remove Gap
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const cur = font.lineHeight ?? 1.25;
+                      handleFontChange({ lineHeight: Math.min(2.8, Math.round((cur + 0.1) * 100) / 100) });
+                    }}
+                    className="flex-1 py-1 px-2 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-emerald-300 hover:text-white transition-colors text-xs font-semibold"
+                    title="Add gap between lines"
+                  >
+                    + Add Gap
+                  </button>
+                </div>
+                <input
+                  type="range"
+                  min="0.75"
+                  max="2.8"
+                  step="0.05"
+                  value={font.lineHeight ?? 1.25}
+                  onChange={(e) => handleFontChange({ lineHeight: parseFloat(e.target.value) })}
+                  className="w-full accent-orange-500 cursor-pointer"
+                />
+              </div>
             </div>
           )}
 

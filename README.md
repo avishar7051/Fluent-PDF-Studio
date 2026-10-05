@@ -19,10 +19,11 @@
 - **Automatic Image-to-PDF Conversion**: Uploading an image automatically builds a standardized, high-resolution PDF canvas and opens it straight in the editor.
 - **Instant Sample Documents**: Quick one-click buttons to test immediately with a realistic multi-page contract or commercial invoice.
 
-### 2. In-Place Text Editing with Intelligent Font Matching
+### 2. In-Place Text Editing with Intelligent Font Matching & Line Gap Controls
 - **Automatic Typography Detection**: Extracts text bounding boxes, font identifiers (`Times-Roman`, `Helvetica`, `SegoeUI`, `Courier`, etc.), font sizes (in points), font weights (Regular/Bold), and styles (Normal/Italic).
+- **Line Gap Adjustment (Add/Remove Line Spacing)**: Easily increase or decrease the gap between lines with one-click presets (`Tight (0.9x)` to remove gap, `Standard (1.15x)`, `Relaxed (1.5x)`, `Double (2.0x)` to add gap), steppers (`+` and `-`), fine-tuning sliders, and an on-canvas floating toolbar.
 - **Style-Matched Replacement**: Seamlessly covers original text with an underlying background patch (auto-sampled from the document canvas) and stamps replacement text matching the original font family, size, line-height, and color.
-- **Font Tuning Inspector**: Fine-tune font family, size stepper, bold/italic, alignment (left/center/right), letter-spacing, and patch color.
+- **Font Tuning Inspector**: Fine-tune font family, size stepper, bold/italic, alignment (left/center/right), letter-spacing, line gap, and patch color.
 
 ### 3. Intuitive Drag-and-Drop Digital Signatures
 - **Draw Signature**: Smooth ink strokes with natural velocity/pressure curves, customizable fountain pen ink colors (Royal Blue `#1d4ed8`, Midnight Black `#0f172a`, Flame Orange `#ea580c`, Crimson Red `#dc2626`), and stroke thickness slider.

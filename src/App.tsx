@@ -298,8 +298,13 @@ export default function App() {
     const newTextWidth = newText.length * approxCharWidth;
 
     // Width covers either the original width or the new text width, plus padding
+    const linesCount = Math.max(1, newText.split('\n').length);
+    const lineGapMultiplier = fontSettings.lineHeight ?? 1.25;
     const finalWidthPt = Math.max(origW + padH * 2, newTextWidth + padH * 2);
-    const finalHeightPt = Math.max(origH + padV * 2, (fontSettings.size || 12) * 1.35 + padV * 2);
+    const finalHeightPt = Math.max(
+      origH + padV * 2,
+      (fontSettings.size || 12) * lineGapMultiplier * linesCount + padV * 2
+    );
 
     const finalWidthPct = (finalWidthPt / targetPage.width) * 100;
     const finalHeightPct = (finalHeightPt / targetPage.height) * 100;
